@@ -1,4 +1,4 @@
-This is my submission for the Order Processing System assignment. It’s a computerized system designed for a textile factory to manage orders, track stock,
+It’s a computerized system designed for a textile factory to manage orders, track stock,
 and monitor costs like transport. The system includes cool features like password protection, dynamic product searches, automatic quote-to-order conversion,
 and inventory alerts to avoid stock shortages.
 
