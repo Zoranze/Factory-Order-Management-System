@@ -1,5 +1,3 @@
-package test2;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,34 +10,38 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class OrderManagementScreen extends JFrame {
-    private JTextField nameField, addressField, contactField;
-    private JComboBox<String> preferredTransportBox;
+    private JTextField nameField, addressField, contactField,ageField;
+    private JComboBox<String> preferredTransportBox, deleteOrderBox, searchOrderBox;
     private JRadioButton maleRadioButton, femaleRadioButton;
     private ButtonGroup genderButtonGroup;
-    private JComboBox<String> deleteOrderBox, searchOrderBox;
+    private JPanel mainPanel, genderPanel, southPanel;
+    private JLabel nameLabel, addressLabel, genderLabel, ageLabel, contactLabel, transportLabel;
+    private JButton addButton, searchButton, deleteButton, backButton;
 
     public OrderManagementScreen() {
         setTitle("Order Management");
         setSize(1000, 700); // Larger frame size
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(240, 248, 255)); // Light blue background
         setLocationRelativeTo(null); // Center the frame
 
-        // North Panel: Customer Details (GridLayout 5x2)
-        JPanel northPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        northPanel.setBackground(new Color(240, 248, 255));
+        // Main Panel: All Components in One Panel (GridLayout)
+        mainPanel = new JPanel(new GridLayout(7, 2, 10, 10)); // Adjusted rows for compactness
+        mainPanel.setBackground(new Color(240, 248, 255));
 
-        northPanel.add(new JLabel("Customer Name:"));
+        // Customer Name
+        mainPanel.add(new JLabel("Customer Name:"));
         nameField = new JTextField();
-        northPanel.add(nameField);
+        mainPanel.add(nameField);
 
-        northPanel.add(new JLabel("Address:"));
+        // Address
+        mainPanel.add(new JLabel("Address:"));
         addressField = new JTextField();
-        northPanel.add(addressField);
+        mainPanel.add(addressField);
 
-        northPanel.add(new JLabel("Gender:"));
-        JPanel genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Gender
+        mainPanel.add(new JLabel("Gender:"));
+        genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Compact gender panel
         genderPanel.setBackground(new Color(240, 248, 255));
         maleRadioButton = new JRadioButton("Male");
         femaleRadioButton = new JRadioButton("Female");
@@ -48,32 +50,38 @@ public class OrderManagementScreen extends JFrame {
         genderButtonGroup.add(femaleRadioButton);
         genderPanel.add(maleRadioButton);
         genderPanel.add(femaleRadioButton);
-        northPanel.add(genderPanel);
+        mainPanel.add(genderPanel);
 
-        northPanel.add(new JLabel("Contact Details:"));
+        mainPanel.add(new JLabel("Age:"));
+        ageField = new JTextField();
+        mainPanel.add(ageField);
+
+        // Contact Details
+        mainPanel.add(new JLabel("Contact Details:"));
         contactField = new JTextField();
-        northPanel.add(contactField);
+        mainPanel.add(contactField);
 
-        northPanel.add(new JLabel("Preferred Method of Transport:"));
+        // Preferred Method of Transport
+        mainPanel.add(new JLabel("Preferred Method of Transport:"));
         String[] transportTypes = {"truck", "ship", "air"};
         preferredTransportBox = new JComboBox<>(transportTypes);
-        northPanel.add(preferredTransportBox);
+        mainPanel.add(preferredTransportBox);
 
-        add(northPanel, BorderLayout.NORTH);
+        // Add Customer Button
+        addButton = new JButton("Add Customer");
+        addButton.setFont(new Font("Arial", Font.BOLD, 16));
+        addButton.setForeground(Color.WHITE);
+        addButton.setBackground(new Color(0, 123, 255)); // Blue color
+        addButton.setFocusPainted(false);
+        addButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        addButton.addActionListener(new ButtonHandler());
+        mainPanel.add(addButton);
 
-        // Center Panel: Add Customer Button (GridLayout 1x1)
-        JPanel centerPanel = new JPanel(new GridLayout(1, 1));
-        centerPanel.setBackground(new Color(240, 248, 255));
-
-        JButton addButton = new JButton("Add Customer");
-        styleButton(addButton);
-        addButton.addActionListener(e -> addCustomer());
-        centerPanel.add(addButton);
-
-        add(centerPanel, BorderLayout.CENTER);
+        // Add Main Panel to Frame
+        add(mainPanel, BorderLayout.CENTER);
 
         // South Panel: Search, Delete, and Back Buttons (GridLayout 3x3)
-        JPanel southPanel = new JPanel(new GridLayout(3, 3, 10, 10));
+        southPanel = new JPanel(new GridLayout(3, 3, 10, 10));
         southPanel.setBackground(new Color(240, 248, 255));
 
         // Search Order Section
@@ -82,10 +90,13 @@ public class OrderManagementScreen extends JFrame {
         searchOrderBox = new JComboBox<>(orderNames);
         searchOrderBox.setSelectedIndex(-1); // No default selection
         southPanel.add(searchOrderBox);
-
-        JButton searchButton = new JButton("Search");
-        styleButton(searchButton);
-        searchButton.addActionListener(e -> searchOrder());
+        searchButton = new JButton("Search");
+        searchButton.setFont(new Font("Arial", Font.BOLD, 16));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setBackground(new Color(0, 123, 255)); // Blue color
+        searchButton.setFocusPainted(false);
+        searchButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
+        searchButton.addActionListener(new ButtonHandler());
         southPanel.add(searchButton);
 
         // Delete Order Section
@@ -93,39 +104,68 @@ public class OrderManagementScreen extends JFrame {
         deleteOrderBox = new JComboBox<>(orderNames);
         deleteOrderBox.setSelectedIndex(-1); // No default selection
         southPanel.add(deleteOrderBox);
-
-        JButton deleteButton = new JButton("Delete");
-        styleButton(deleteButton);
-        deleteButton.addActionListener(e -> deleteOrder());
+        deleteButton = new JButton("Delete");
+        deleteButton.setFont(new Font("Arial", Font.BOLD, 16));
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setBackground(new Color(0, 123, 255)); // Blue color
+        deleteButton.setFocusPainted(false);
+        deleteButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
+        deleteButton.addActionListener(new ButtonHandler());
         southPanel.add(deleteButton);
 
         // Empty Space and Back Button
         southPanel.add(new JLabel()); // Empty space
         southPanel.add(new JLabel()); // Empty space
-
-        JButton backButton = new JButton("Back");
+        backButton = new JButton("Back");
         backButton.setFont(new Font("Arial", Font.BOLD, 14));
         backButton.setForeground(Color.BLACK);
         backButton.setBackground(new Color(173, 216, 230)); // Light blue color
         backButton.setFocusPainted(false);
         backButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         backButton.setPreferredSize(new Dimension(100, 30)); // Smaller button
-        backButton.addActionListener(e -> navigateToMainDashboard());
+        backButton.addActionListener(new ButtonHandler());
         southPanel.add(backButton);
 
+        // Add South Panel to Frame
         add(southPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
+    private class ButtonHandler implements ActionListener{
+    	public void actionPerformed (ActionEvent ae) {
+    		Object source = ae.getSource();
+    		
+    		if (source == addButton) {
+    			addCustomer();
+    		} else if (source == searchButton) {
+    			searchOrder();
+    		} else if (source == deleteButton) {
+    			deleteOrder();
+    		} else {
+    			dispose();
+    		}
+    	}
+    }
+
+
     private void addCustomer() {
         String name = nameField.getText().trim();
         String address = addressField.getText().trim();
         String contact = contactField.getText().trim();
+        String ageText = ageField.getText().trim();
 
         // Validate inputs
-        if (name.isEmpty() || address.isEmpty() || contact.isEmpty()) {
+        if (name.isEmpty() || address.isEmpty() || contact.isEmpty() || ageText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int age;
+        try {
+            age = Integer.parseInt(ageText);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid age!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -133,24 +173,25 @@ public class OrderManagementScreen extends JFrame {
         String preferredTransport = (String) preferredTransportBox.getSelectedItem();
 
         // Insert customer into database
-        String query = "INSERT INTO Customers (name, address, gender, preferred_transport_type, contact_number) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Customers (name, address, gender, age, preferred_transport_type, contact) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, name);
             stmt.setString(2, address);
             stmt.setString(3, gender);
-            stmt.setString(4, preferredTransport);
-            stmt.setString(5, contact);
+            stmt.setInt(4, age);
+            stmt.setString(5, preferredTransport);
+            stmt.setString(6, contact);
 
             stmt.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "Customer added successfully!");
         } catch (SQLException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private void deleteOrder() {
         String selectedOrder = (String) deleteOrderBox.getSelectedItem();
         if (selectedOrder == null || selectedOrder.isEmpty()) {
@@ -256,16 +297,8 @@ public class OrderManagementScreen extends JFrame {
         searchOrderBox.setModel(new DefaultComboBoxModel<>(orderNames));
     }
 
-    private void styleButton(JButton button) {
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(0, 123, 255)); // Blue color
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-    }
 
     private void navigateToMainDashboard() {
         dispose(); // Close the current screen
-       
     }
 }
